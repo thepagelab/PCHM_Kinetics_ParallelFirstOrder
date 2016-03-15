@@ -4,14 +4,14 @@
 <head>
   <title>Kinetics: Parallel First Order</title>
   <meta charset="UTF-8">
-  <!-- Source the latest plotly.js source code and dependencies --> 
+  <!-- Source the latest plotly.js source code and dependencies -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style type="text/css">
     h1{font-family:Arial,Helvetica,sans-serif;font-size:16pt;font-weight:bold;}
     h2{font-family:Arial,Helvetica,sans-serif;font-size:15pt;margin:0.5em;margin-left:2em;font-weight:bold;}
     BODY{font-family:Arial,Helvetica,sans-serif;font-size:12pt;margin:5px;}
     TD{font-family:Arial,Helvetica,sans-serif;font-size:12pt;}
-    .ex1{border-spacing:20px 2px;font-family:Arial,Helvetica,sans-serif;font-size:12pt;} 
+    .ex1{border-spacing:20px 2px;font-family:Arial,Helvetica,sans-serif;font-size:12pt;}
     .ColPad {padding-left:20px;}
     f1{font-family:Arial,Helvetica,sans-serif;font-size:10pt;}
     .arrow{position:relative;text-align:center;}
@@ -88,7 +88,7 @@ function LoadCalcSet(){
   A_Conc = time.map(function(x) { return AzeroForm * Math.exp((-1 * (koneForm +ktwoForm)) * x); });
   B_Conc = time.map(function(x) { return BzeroForm + (((koneForm * AzeroForm)/(koneForm + ktwoForm)) * (1 - Math.exp((-1 * (koneForm +ktwoForm)) * x))); });
   C_Conc = time.map(function(x) { return CzeroForm + ((ktwoForm * AzeroForm)/(koneForm + ktwoForm)) * (1 - Math.exp((-1 * (koneForm +ktwoForm)) * x)); });
-  // Return sums and traces 
+  // Return sums and traces
   ABsum = A_Conc.SumArray(B_Conc);
   ABCsum = ABsum.SumArray(C_Conc);
   ATrace = {x: time, y: A_Conc, mode: 'lines', name: '[A]', type: 'scatter'};
@@ -101,7 +101,7 @@ function LoadCalcSet(){
 function Plot(){
   LoadCalcSet();
   var layout = {
-    xaxis: {type: 'linear', title: 'time (seconds)', autorange: true}, 
+    xaxis: {type: 'linear', title: 'time (seconds)', autorange: true},
     yaxis: {type: 'linear', title: 'Species Concentration (&mu;M)', autorange: true}};
   Plotly.plot('PlotDiv',data,layout,{displayModeBar: false});}
 // Replot
