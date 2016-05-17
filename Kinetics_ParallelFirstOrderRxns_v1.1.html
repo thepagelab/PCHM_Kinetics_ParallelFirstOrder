@@ -21,14 +21,14 @@
 <!-- Title -->
 <h1>Species Concentrations as a Function of Time: Parallel First Order Reactions</h1>
 <!-- Chemical equation -->
-<h2>B<span class="arrow"><i>&#8592;</i><span class="onarrow">k<sub>1</sub></span></span>A<span class="arrow"><i>&#8594;</i><span class="onarrow">k<sub>2</sub></span></span>C</h2>
+<h2>A<span class="arrow"><i>&#8592;</i><span class="onarrow">k<sub>-1</sub></span></span>B<br><br>A<span class="arrow"><i>&#8594;</i><span class="onarrow">k<sub>1</sub></span></span>B</h2>
 <f1>The above reactions are a set of irreversible, parallel first order reactions.</f1><br>
 <body>
 <!-- Display suggested parameters -->
 Suggested starting values for the parameters below:<br>
 <table class="ex1" border="0">
-  <tr><td>[A]<sub>0</sub> = 1.0 &mu;M</td><td>[B]<sub>0</sub> = 0.0 &mu;M</td><td>[C]<sub>0</sub> = 0.0 &mu;M</td></tr>
-  <tr><td>k<sub>1</sub> = 6.0  s<sup>-1</sup></td><td>k<sub>2</sub> = 3.0  s<sup>-1</sup></td></tr>
+  <tr><td>[A]<sub>0</sub> = 1.0 &mu;M</td><td>[B]<sub>0</sub> = 0.0 &mu;M</td></tr>
+  <tr><td>k<sub>1</sub> = 3.0  s<sup>-1</sup></td><td>k<sub>-1</sub> = 1.0  s<sup>-1</sup></td></tr>
 </table>
 <!-- Form for user input of values -->
 <f1>Modify the values in the form fields below and the plot will automatically recalculate.<br>
@@ -41,11 +41,9 @@ Hover over graph to view values.</f1>
       <td class="ColPad">k<sub>1</sub>:</td>
       <td><input type="text" value="6.0" size=8 maxlength=6 style="width:45px;" onchange="RePlot()"> s<sup>-1</sup></td></tr>
     <tr><td>[B]<sub>0</sub>:</td>
-      <td><input type="text" value="0.0" size=8 maxlength=6 style="width:45px;" onchange="RePlot()"> &mu;M</td>
+      <td><input type="text" value="0.0" size=8 maxlength=6 style="width:45px;" onchange="RePlot()" readonly> &mu;M </td>
       <td class="ColPad">k<sub>2</sub>:</td>
       <td><input type="text" value="3.0" size=8 maxlength=6 style="width:45px;" onchange="RePlot()"> s<sup>-1</sup></td></tr>
-    <tr><td>[C]<sub>0</sub>:</td>
-      <td><input type="text" value="0.0" size=8 maxlength=6 style="width:45px;" onchange="RePlot()"> &mu;M</td></tr>
     <tr><td colspan=2><input type="button" value="Reset Form & Plot" onClick="SetFormValues()"></td></tr>
   </table>
 </form>
@@ -71,31 +69,26 @@ Array.prototype.SumArray = function (arr){
 function SetFormValues(){
   document.getElementById("StartValues_frm").elements.item(0).value = '1.0';
   document.getElementById("StartValues_frm").elements.item(2).value = '0.0';
-  document.getElementById("StartValues_frm").elements.item(4).value = '0.0';
-  document.getElementById("StartValues_frm").elements.item(1).value = '6.0';
-  document.getElementById("StartValues_frm").elements.item(3).value = '3.0';
+  document.getElementById("StartValues_frm").elements.item(1).value = '3.0';
+  document.getElementById("StartValues_frm").elements.item(3).value = '1.0';
   RePlot();
 }
 // Load variables from form, set time variable
 function LoadCalcSet(){
   AzeroForm = document.getElementById("StartValues_frm").elements.item(0).value * 1;
   BzeroForm = document.getElementById("StartValues_frm").elements.item(2).value * 1;
-  CzeroForm = document.getElementById("StartValues_frm").elements.item(4).value * 1;
   koneForm = document.getElementById("StartValues_frm").elements.item(1).value * 1;
-  ktwoForm = document.getElementById("StartValues_frm").elements.item(3).value * 1;
+  knoneForm = document.getElementById("StartValues_frm").elements.item(3).value * 1;
   time = linspace(0, 1, 1000);
   // Equations for two parallel first order reactions A -> B with rate k1 and A -> C with rate k2
-  A_Conc = time.map(function(x) { return AzeroForm * Math.exp((-1 * (koneForm +ktwoForm)) * x); });
-  B_Conc = time.map(function(x) { return BzeroForm + (((koneForm * AzeroForm)/(koneForm + ktwoForm)) * (1 - Math.exp((-1 * (koneForm +ktwoForm)) * x))); });
-  C_Conc = time.map(function(x) { return CzeroForm + ((ktwoForm * AzeroForm)/(koneForm + ktwoForm)) * (1 - Math.exp((-1 * (koneForm +ktwoForm)) * x)); });
+  A_Conc = time.map(function(x) { return ((AzeroForm * knoneForm)/(koneForm + knoneForm)) * (1 + ((koneForm/knoneForm) * Math.pow(Math.E,-(koneForm+knoneForm) * x))); });
+  B_Conc = time.map(function(x) { return ((AzeroForm * koneForm)/(koneForm + knoneForm)) * (1 - ( Math.pow(Math.E,-(koneForm+knoneForm) * x))); });
   // Return sums and traces 
   ABsum = A_Conc.SumArray(B_Conc);
-  ABCsum = ABsum.SumArray(C_Conc);
   ATrace = {x: time, y: A_Conc, mode: 'lines', name: '[A]', type: 'scatter'};
   BTrace = {x: time, y: B_Conc, mode: 'lines', name: '[B]', type: 'scatter'};
-  CTrace = {x: time, y: C_Conc, mode: 'lines', name: '[C]', type: 'scatter'};
-  SumTrace = {x: time, y: ABCsum, mode: 'lines', name: 'Sum', type: 'scatter'};
-  data = [ATrace,BTrace,CTrace,SumTrace];
+  SumTrace = {x: time, y: ABsum, mode: 'lines', name: 'Sum', type: 'scatter'};
+  data = [ATrace,BTrace,SumTrace];
 }
 // Plot
 function Plot(){
